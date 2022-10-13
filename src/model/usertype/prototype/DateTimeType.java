@@ -8,7 +8,6 @@ import java.io.InputStreamReader;
 import java.util.Random;
 
 public class DateTimeType implements ProtoType {
-    private DateTimeClass dateTimeValue;
 
     @Override
     public String typeName() {
@@ -31,28 +30,25 @@ public class DateTimeType implements ProtoType {
         int minTime = 0, maxTime = 59;
 
         Random rand = new Random();
-        int day = rand.nextInt((maxDay - minDay) + 1);
-        int month = rand.nextInt((maxMonth - minMonth) + 1);
-        int year = rand.nextInt((maxYear - minYear) + 1);
+        int day = rand.nextInt(maxDay - minDay) + 1;
+        int month = rand.nextInt(maxMonth - minMonth) + 1;
+        int year = rand.nextInt(maxYear - minYear) + 1;
         int hour = rand.nextInt(maxHour - minHour);
         int minute = rand.nextInt(maxTime - minTime);
         int second = rand.nextInt(maxTime - minTime);
 
-        dateTimeValue = new DateTimeClass(day, month, year, hour, minute, second);
+        DateTimeClass dateTimeValue = new DateTimeClass(day, month, year, hour, minute, second);
 
         return dateTimeValue;
     }
 
     @Override
-    public Object clone() {
-        if (dateTimeValue != null) {
-            DateTimeClass copyDateTime = new DateTimeClass(dateTimeValue.getDay(),
-                    dateTimeValue.getHour(), dateTimeValue.getYear(),
-                    dateTimeValue.getHour(), dateTimeValue.getMinute(),
-                    dateTimeValue.getSecond());
-            return copyDateTime;
-        }
-        return null;
+    public Object clone(Object obj) {
+        DateTimeClass copyDateTime = new DateTimeClass(((DateTimeClass)obj).getDay(),
+                ((DateTimeClass)obj).getHour(), ((DateTimeClass)obj).getYear(),
+                ((DateTimeClass)obj).getHour(), ((DateTimeClass)obj).getMinute(),
+                ((DateTimeClass)obj).getSecond());
+        return copyDateTime;
     }
 
     @Override

@@ -8,7 +8,6 @@ import java.io.InputStreamReader;
 import java.util.Random;
 
 public class IntegerType implements ProtoType {
-    private IntegerClass intValue;
 
     @Override
     public String typeName() {
@@ -21,17 +20,14 @@ public class IntegerType implements ProtoType {
         int min = -1000;
         int max = 1000;
         Random rand = new Random();
-        intValue = new IntegerClass(rand.nextInt((max - min) + 1));
+        IntegerClass intValue = new IntegerClass(rand.nextInt((max - min)) + min);
         return intValue;
     }
 
     @Override
-    public Object clone() {
-        if (intValue != null) {
-            IntegerClass copyInt = new IntegerClass(intValue.getValue());
-            return copyInt;
-        }
-        return null;
+    public Object clone(Object obj) {
+        IntegerClass copyInt = new IntegerClass(((IntegerClass)obj).getValue());
+        return copyInt;
     }
 
     @Override

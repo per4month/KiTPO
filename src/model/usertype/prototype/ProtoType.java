@@ -12,7 +12,7 @@ public interface ProtoType {
         public Object create();
 
         // Клонирование текущего
-        public Object clone();
+        public Object clone(Object obj);
 
         // Создание и чтения объекта
         public Object readValue(InputStreamReader in);
