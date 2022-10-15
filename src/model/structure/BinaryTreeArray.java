@@ -3,10 +3,14 @@ package model.structure;
 //TODO реализовать структуру
 //TODO реализовать вывод и чтение из файла структуры данных
 //TODO Реализована вставка в дерево, обход (печать в массив и печать дерева),
-//TODO Нужно: удаление по логическому номеру (индексу),
-//      поиск по по логическому номеру (индексу) (есть, но работает криво), балансировка
-//      поиск по значению, итератор/foreach,
-//      запись/чтение в/из бинарника
+//TODO Нужно: 
+//удаление по логическому номеру (индексу)
+//удаление по значению нужно?
+//поиск по по логическому номеру (индексу) (есть, но работает криво),  
+//балансировка
+//поиск по значению -- done
+//итератор/foreach,
+//запись/чтение в/из бинарника -- нам что то мешает записывать тупа подряд с 0 по конец объекта?
 
 
 import model.comparator.Comparator;
@@ -57,6 +61,24 @@ public class BinaryTreeArray {
     // Вставка значения в дерево
     public void addValue(Object value) {
         insertRecursive(0, value);
+    }
+    private Object findRecursive(int current, Object value) {
+        if (current > size) {
+            return null;
+        }
+        if (comparator.compare(value, arrayTree.get(current)) == 0)
+        return arrayTree.get(current);
+        if (comparator.compare(value,arrayTree.get(current)) < 0)
+        return findRecursive(2 * current + 1, value);
+        else
+        return findRecursive(2 * current + 2, value);
+        
+    }
+    public Object findByValue(Object value) throws Exception{
+        Object temp = findRecursive(0, value);
+        if(temp == null) throw new Exception("Binary tree has no such value");
+        return temp;
+
     }
 
     private void scan(int current, int level, boolean boolTree){

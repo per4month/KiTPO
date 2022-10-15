@@ -9,7 +9,7 @@ public class Main {
         BinaryTreeArray bts = new BinaryTreeArray(intType.getTypeComparator());
 
         bts.addValue(intType.create());
-        bts.addValue(intType.create());
+        bts.addValue(new IntegerClass(5));
         bts.addValue(intType.create());
         bts.addValue(intType.create());
         bts.addValue(intType.create());
@@ -18,9 +18,16 @@ public class Main {
         bts.printTree();
 
         bts.printArray();
-
+        try {
+        Object s = bts.findByValue(new IntegerClass(5));
+        System.out.println("I found " + s.toString());
+        }
+        catch(Exception ex)
+        {
+            System.out.println("Not found");
+        }
         System.out.println("\nsize = " + bts.getSize(2));
-        System.out.println("\nsearch = " + ((IntegerClass) bts.getDataAtIndex(2)).toString());
+        System.out.println("\nsearch = " + ((IntegerClass) bts.getDataAtIndex(1)).toString());
 
     }
 }

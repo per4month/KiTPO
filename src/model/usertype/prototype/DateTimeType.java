@@ -4,6 +4,7 @@ import model.comparator.Comparator;
 import model.comparator.DateTimeComparator;
 import model.usertype.type.DateTimeClass;
 
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Random;
 
@@ -36,30 +37,44 @@ public class DateTimeType implements ProtoType {
         int hour = rand.nextInt(maxHour - minHour);
         int minute = rand.nextInt(maxTime - minTime);
         int second = rand.nextInt(maxTime - minTime);
-
-        DateTimeClass dateTimeValue = new DateTimeClass(day, month, year, hour, minute, second);
-
+        DateTimeClass dateTimeValue;
+        //Если рандом нам сгенерировал дату, которой быть не может, то генерируем со статичными значениями
+        try {
+        dateTimeValue = new DateTimeClass(day, month, year, hour, minute, second);
+        }
+        catch(Exception ex) {
+            System.out.println("Bad date, generating using a static values");
+            dateTimeValue = new DateTimeClass();
+        }
         return dateTimeValue;
     }
 
     @Override
     public Object clone(Object obj) {
-        DateTimeClass copyDateTime = new DateTimeClass(((DateTimeClass)obj).getDay(),
-                ((DateTimeClass)obj).getHour(), ((DateTimeClass)obj).getYear(),
-                ((DateTimeClass)obj).getHour(), ((DateTimeClass)obj).getMinute(),
-                ((DateTimeClass)obj).getSecond());
+        DateTimeClass copyDateTime;
+        try {
+            copyDateTime = new DateTimeClass(((DateTimeClass)obj).getDay(),
+                    ((DateTimeClass)obj).getHour(), ((DateTimeClass)obj).getYear(),
+                    ((DateTimeClass)obj).getHour(), ((DateTimeClass)obj).getMinute(),
+                    ((DateTimeClass)obj).getSecond());
+        }
+        catch(Exception ex) {
+            copyDateTime = new DateTimeClass();
+        }
         return copyDateTime;
     }
 
     @Override
-    public Object readValue(InputStreamReader in) {
-        //TODO Доработать чтение
-        return null;
+    public Object readValue(InputStreamReader in) throws IOException {
+        //не тестил
+        String buf = in.toString();
+        return parseValue(buf);
     }
 
     @Override
     public Object parseValue(String someString) {
-        //TODO Доработать парсинг
+        // чота я запутался чо тут должно быть, реквестирую лекцию
+        // см. вопрос в Iteger.Type.java
         return null;
     }
 
