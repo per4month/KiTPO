@@ -4,6 +4,7 @@ import model.comparator.Comparator;
 import model.comparator.IntegerComparator;
 import model.usertype.type.IntegerClass;
 
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Random;
 
@@ -31,15 +32,15 @@ public class IntegerType implements ProtoType {
     }
 
     @Override
-    public Object readValue(InputStreamReader in) {
-        //TODO Дописать чтение
-        return null;
+    public Object readValue(InputStreamReader in) throws IOException{
+        return in.read();
     }
 
     @Override
     public Object parseValue(String someString) {
-        //TODO Дописать парсинг
-        return null;
+        return Integer.parseInt(someString);
+        // то что нужно?
+        // нужно создавать объект типа IntegerClass?
     }
 
     @Override
