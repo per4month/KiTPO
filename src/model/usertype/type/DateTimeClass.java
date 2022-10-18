@@ -1,4 +1,5 @@
 package model.usertype.type;
+import java.io.Serializable;
 import java.lang.Exception;
 
 // TODO добавить проверки, чтобы
@@ -17,9 +18,8 @@ import java.lang.Exception;
 
 
 
-//TODO: добавление и(или?) вычитание целого числа дней
 
-public class DateTimeClass {
+public class DateTimeClass implements Serializable{
     private static int changeYear = 1582; 
     private int day;
     private int month;
