@@ -5,7 +5,7 @@ import model.comparator.Comparator;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-public interface ProtoType {
+public interface ProtoType  {
         // Имя типа
         public String typeName();
 

@@ -1,13 +1,20 @@
 package model.structure;
-
+import java.util.Vector;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 //TODO реализовать структуру
 //TODO реализовать вывод и чтение из файла структуры данных
 //TODO Реализована вставка в дерево, обход (печать в массив и печать дерева),
 //TODO Нужно: 
 //удаление по логическому номеру (индексу)
-//удаление по значению нужно?
+//удаление по значению нужно? -- no
 //поиск по по логическому номеру (индексу) (есть, но работает криво),  
-//балансировка
+//балансировка -- DONE
 //поиск по значению -- done
 //итератор/foreach,
 //запись/чтение в/из бинарника -- нам что то мешает записывать тупа подряд с 0 по конец объекта?
@@ -17,7 +24,7 @@ import model.comparator.Comparator;
 
 import java.util.ArrayList;
 
-public class BinaryTreeArray {
+public class BinaryTreeArray implements Serializable {
 
     private ArrayList <Object> arrayTree;
 
@@ -38,6 +45,42 @@ public class BinaryTreeArray {
             arrayTree.add(null);
         this.comparator = comparator;
     }
+    private BinaryTreeArray(int size, ArrayList<Object> t, Comparator c) {
+        this.size = size;
+        this.comparator = c;
+        this.arrayTree = t;
+    }
+    public void save()  {
+        try {
+        FileOutputStream outputStream = new FileOutputStream("saved.ser");
+        ObjectOutputStream out = new ObjectOutputStream(outputStream);
+        out.writeObject(this);
+        out.close();
+        outputStream.close();
+        }
+        catch(IOException i) {
+            i.printStackTrace();
+        }
+         
+    }
+    public BinaryTreeArray load() {
+        BinaryTreeArray loadedArrayTree = null;
+        try {
+        FileInputStream fileIn = new FileInputStream("saved.ser");
+        ObjectInputStream in = new ObjectInputStream(fileIn);
+        loadedArrayTree = (BinaryTreeArray) in.readObject();
+        in.close();
+        fileIn.close();
+        }
+        catch(IOException i) {
+            i.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return loadedArrayTree;
+
+    }
+
 
     // Вcпомогательный метод вставки значения в массив
     private void insertRecursive(int current, Object obj){
@@ -139,121 +182,87 @@ public class BinaryTreeArray {
     public Object getDataAtIndex(int searchIndex){
         return getDataAtIndexRecursive(0, searchIndex);
     }
-
-    /*
-
-    Код с Сипрога
-
-    // Число вершин в поддереве
-    public int getSize(int n){
-        if (n >= size || arrayTree.get(n) == null)
-            return 0;
-        return 1 + getSize(2 * n) + getSize(2 * n + 1);
-    }
-
-    // Обход дерева
-    void scan(int n, int level, int ln){
-        if (n >= size || arrayTree.get(n) == null)
+    // итератор forEach
+    public void forEach(DoWith func)
+    {
+        if (arrayTree == null || size <= 0)
             return;
-        scan(2  * n,level + 1, ln);
-        System.out.println("l = " + level + "; n = " + ln + "; data = " + arrayTree.get(n).toString() + "\n";
-        ln++;
-        scan(2 * n+1,level + 1, ln);
-    }
-
-    // Поиск вершины по логическому номеру
-    Object getDataAtIndex(int m, int n){
-
-        if (m>=size || m>=getSize(n))
-            return null;
-
-        int ll = getSize(2 * n); // число вершин в левом поддереве
-
-        if (m < ll)
-            return getDataAtIndex(m,2 * n); // ЛН в левом поддереве
-
-        m -= ll; // отбросить вершины левого поддерева
-
-        if (m-- ==0)
-            return arrayTree.get(n); // ЛН – номер текущей вершины
-
-        return getDataAtIndex(m,2 * n + 1);  // в правое поддерево с остатком ЛН
-    }
-
-// Включение с сохранением порядка
-    void insert(int n, Object obj){
-        if (n>=sz){                                             // увеличение размерности при выходе
-
-            sz*=2;                                       // за пределы массива
-
-            p=(char**)realloc(p,sz*sizeof(char*));
-
-            for (int i=sz/2;i<sz;i++) p[i]=NULL; // с обнулением новой части
-
+        int sz = getSize(0);
+        Vector <Integer> v = new Vector<Integer>(size);
+        setHelp(v, 0);
+        for(int i=0; i < sz; i++)
+        {
+            func.doWith(arrayTree.get(v.get(i)));
         }
-
-        if (p[n] == NULL) { p[n]=ss; return; }         // свободная вершина - включение
-
-        if (strcmp(ss,p[n])<0)
-
-            insert(2*n, ss);                           // выбор левого или правого поддерева
-
-        else                                                      // в зависимости от результата сравнения
-
-            insert(2*n+1, ss);}
-
-    /*Для балансировки двоичного дерева используется обход с сохранением упорядоченной последовательности
-    в линейном массиве (массиве указателей). Затем массив рекурсивно делится пополам, а значение из середины
-    интервала включается в новое дерево, которое получается сбалансированным.*/
-
-
-//------------------------------------------------------85-03.cpp
-
-//-- обход дерева с сохранением строк в линейном массиве
-
-   /* void set(char *pp[], int n, int &ln){
-
-        if (n>=sz || p[n]==NULL) return;
-
-        set(pp,2*n,ln);
-
-        pp[ln++]=p[n];
-
-        set(pp,2*n+1,ln);}*/
-
-// Построение сбалансированного дерева
-
-    /*void balance(char *p[], int a, int b){
+    }
+    //рекурсивная балансировка
+    private void  balance(Vector<Object> t, int a, int b, ArrayList<Object> r) {
 
         if (a>b) return;
+        if (a==b) return;
 
-        int m=(a+b)/2;                                        // взять строку из середины интервала
+        int m=(a+b) >>> 1;                                        // взять строку из середины интервала
+                          
+        insertRecursive(r, 0,t.get(m));
 
-        insert(1,p[m]);                                        // и включить в двоичное дерево
+        balance(t, m+1,b, r);                                   // рекурсивно выполнить для левой и
 
-        balance(p,a,m-1);                                   // рекурсивно выполнить для левой и
+        balance(t, a,m,r);                                  // правой частей
 
-        balance(p,m+1,b);                                  // правой частей
+    }
+    //вставка для нового аррайлист при балансировке
+    private void insertRecursive(ArrayList<Object> t, int current, Object obj){
+        if (current >= size){ // увеличение размерности при выходе
+            size *= 2; // за пределы массива
+            for (int i = size/2; i <= size; i++) // с обнулением новой части
+               t.add(null);
+        }
 
-    }*/
+        if (t.get(current) == null) {
+            t.set(current, obj);
+            return;
+        }
 
-// Балансировка дерева
+        if (comparator.compare(obj,t.get(current)) < 0)
+            insertRecursive(t, 2 * current + 1, obj);
+        else
+            insertRecursive(t, 2 * current + 2, obj);
+    }
+    //главный метод балансировки
+    public BinaryTreeArray balance(){
 
-    /*void balance(){
+        int sz1=getSize(0);
 
-        int sz1=size(1),ln=0;
+        Vector <Object> newArray = new Vector<Object> (size); //вектор индексов
 
-        char **pp=new char*[sz1];
+        ArrayList<Object> newArrayTree = new ArrayList<Object>(size);
+        for(int i = 0; i < size; i++) {
+            newArrayTree.add(null);
+        }
+        set(newArray,0);
+        balance(newArray,0, sz1, newArrayTree);
+        BinaryTreeArray balanced = new BinaryTreeArray(this.size, newArrayTree, this.comparator);
+        return balanced;
 
-        set(pp,1,ln);
+    }
+    //метод для добавления индексов в вектор
+    private void set(Vector<Object> t, int n){
 
-        delete p;
+        if (n>=size || arrayTree.get(n) == null) return;
+        
+        set(t,2*n+1);
+        t.add(arrayTree.get(n));
+        set(t,2*n+2);
+        
+    }
+    //Вспомогательный метод обхода для forEach
+    private void setHelp(Vector<Integer> t, int n){
 
-        init();
-
-        balance(pp,0,sz1-1);
-
-    }};*/
-
-
+        if (n>=size || arrayTree.get(n) == null) return;
+        
+        setHelp(t,2*n+1);
+        t.add(n);
+        setHelp(t,2*n+2);
+        
+    }
 }

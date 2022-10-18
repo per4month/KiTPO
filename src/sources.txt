@@ -1,0 +1,14 @@
+./model/factory/FactoryType.java
+./model/structure/DoWith.java
+./model/structure/BinaryTreeArray.java
+./model/structure/TestIt.java
+./model/usertype/type/IntegerClass.java
+./model/usertype/type/DateTimeClass.java
+./model/usertype/prototype/ProtoType.java
+./model/usertype/prototype/DateTimeType.java
+./model/usertype/prototype/AwaibleTypes.java
+./model/usertype/prototype/IntegerType.java
+./model/comparator/IntegerComparator.java
+./model/comparator/Comparator.java
+./model/comparator/DateTimeComparator.java
+./Main.java
