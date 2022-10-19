@@ -254,14 +254,14 @@ public class BinaryTreeArray implements Serializable {
             arrayShiftRecursive(2 * rootIdx + 2, 2 * index + 2);
     }
 
-    private Object findMaximumKey(int index, Object obj)
-    {
+    private Object findMaximumKey(int index, Object obj) {
         if (index >= size)
             return obj;
         if (arrayTree.get(index) == null)
             return obj;
         obj = findMaximumKey(2 * index + 2, arrayTree.get(index));
         return obj;
+    }
 
     // итератор forEach
     public void forEach(DoWith func)
