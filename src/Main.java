@@ -3,10 +3,17 @@ import model.usertype.prototype.DateTimeType;
 import model.usertype.prototype.IntegerType;
 import model.usertype.type.DateTimeClass;
 import model.usertype.type.IntegerClass;
+import view.GUI;
 
 
 public class Main {
     public static void main(String[] args) {
+
+        // GUI
+        GUI gui = new GUI();
+        gui.showGui();
+
+        // Здесь выполняются все операции одним потоком
         IntegerType intType = new IntegerType();
         DateTimeType dateType = new DateTimeType();
 
