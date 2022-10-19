@@ -1,6 +1,8 @@
 package model.usertype.type;
 
-public class IntegerClass {
+import java.io.Serializable;
+
+public class IntegerClass implements Serializable {
     private int value;
     public IntegerClass(int value) {
         this.value = value;
