@@ -85,8 +85,6 @@ public class DateTimeType implements ProtoType {
         for (int i = 0; i < 3; i++) {
             dateInt[i] = Integer.parseInt(dateStr[i]);
             timeInt[i] = Integer.parseInt(timeStr[i]);
-            System.out.println(dateInt[i]);
-            System.out.println(timeInt[i]);
         }
 
         DateTimeClass dateTimeValue;
