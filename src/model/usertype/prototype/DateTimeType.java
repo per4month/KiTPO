@@ -3,10 +3,14 @@ package model.usertype.prototype;
 import model.comparator.Comparator;
 import model.comparator.DateTimeComparator;
 import model.usertype.type.DateTimeClass;
+import model.usertype.type.IntegerClass;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 public class DateTimeType implements ProtoType {
 
@@ -65,17 +69,36 @@ public class DateTimeType implements ProtoType {
     }
 
     @Override
-    public Object readValue(InputStreamReader in) throws IOException {
-        //не тестил
-        String buf = in.toString();
-        return parseValue(buf);
+    public Object readValue(InputStream inputStream) {
+        return parseValue(new BufferedReader(new InputStreamReader(inputStream))
+                .lines().collect(Collectors.joining("\n")));
     }
 
     @Override
     public Object parseValue(String someString) {
-        // чота я запутался чо тут должно быть, реквестирую лекцию
-        // см. вопрос в Iteger.Type.java
-        return null;
+        String[] words = someString.split(" ");
+        String[] dateStr = words[0].split("/");
+        String[] timeStr = words[1].split(":");
+        Integer[] dateInt = new Integer[3];
+        Integer[] timeInt = new Integer[3];
+
+        for (int i = 0; i < 3; i++) {
+            dateInt[i] = Integer.parseInt(dateStr[i]);
+            timeInt[i] = Integer.parseInt(timeStr[i]);
+            System.out.println(dateInt[i]);
+            System.out.println(timeInt[i]);
+        }
+
+        DateTimeClass dateTimeValue;
+        try {
+            dateTimeValue = new DateTimeClass(dateInt[0], dateInt[1], dateInt[2], timeInt[0], timeInt[1], timeInt[2]);
+        }
+        catch(Exception ex) {
+            System.out.println("Bad date, generating using a static values");
+            dateTimeValue = new DateTimeClass();
+        }
+
+        return dateTimeValue;
     }
 
     @Override

@@ -1,41 +1,20 @@
 import model.structure.BinaryTreeArray;
+import model.usertype.prototype.DateTimeType;
 import model.usertype.prototype.IntegerType;
+import model.usertype.type.DateTimeClass;
 import model.usertype.type.IntegerClass;
 
 
 public class Main {
     public static void main(String[] args) {
         IntegerType intType = new IntegerType();
+        DateTimeType dateType = new DateTimeType();
 
-        BinaryTreeArray bts = new BinaryTreeArray(intType.getTypeComparator());
+        IntegerClass int1 = (IntegerClass) intType.parseValue("323");
+        System.out.println(int1.toString());
 
-        bts.addValue(intType.create());
-        bts.addValue(new IntegerClass(5));
-        bts.addValue(intType.create());
-        bts.addValue(intType.create());
-        bts.addValue(intType.create());
-        bts.addValue(intType.create());
-        System.out.println("\nsize = " + bts.getSize(0));
-        try {
-            Object s = bts.findByValue(new IntegerClass(5));
-            System.out.println("I found " + s.toString());
-            }
-            catch(Exception ex)
-            {
-                System.out.println("Not found");
-            }
-        bts.printTree();
-        BinaryTreeArray bts2 = bts.balance();
-        System.out.println("------------BALANCED---------------");
-        bts2.printTree();
-        bts.save();
-        bts2 = bts2.load();
-        System.out.println("------------DESERIALIZED---------------");
-        bts2.printTree();
-        System.out.println("------------ITERATOR---------------");
-        bts2.forEach((values) -> {
-            System.out.println(values);
-        });
+        DateTimeClass int2 = (DateTimeClass) dateType.parseValue("1/1/2021 02:03:04");
+        System.out.println(int2.toString());
 
     }
 }
