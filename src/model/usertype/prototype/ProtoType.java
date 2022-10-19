@@ -3,7 +3,7 @@ package model.usertype.prototype;
 import model.comparator.Comparator;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.InputStream;
 
 public interface ProtoType {
         // Имя типа
@@ -16,7 +16,7 @@ public interface ProtoType {
         public Object clone(Object obj);
 
         // Создание и чтения объекта
-        public Object readValue(InputStreamReader in) throws IOException;
+        public Object readValue(InputStream inputStream);
 
         // Создает и парсит содержимое из строки
         public Object parseValue(String someString);

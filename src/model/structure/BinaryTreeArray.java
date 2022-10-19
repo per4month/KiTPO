@@ -1,18 +1,5 @@
 package model.structure;
 
-//TODO реализовать структуру
-//TODO реализовать вывод и чтение из файла структуры данных
-//TODO Реализована вставка в дерево, обход (печать в массив и печать дерева),
-//TODO Нужно: 
-//удаление по логическому номеру (индексу)
-//удаление по значению нужно?
-//поиск по по логическому номеру (индексу) (есть, но работает криво),  
-//балансировка
-//поиск по значению -- done
-//итератор/foreach,
-//запись/чтение в/из бинарника -- нам что то мешает записывать тупа подряд с 0 по конец объекта?
-
-
 import model.comparator.Comparator;
 
 import java.util.ArrayList;
@@ -67,11 +54,11 @@ public class BinaryTreeArray {
             return null;
         }
         if (comparator.compare(value, arrayTree.get(current)) == 0)
-        return arrayTree.get(current);
+            return arrayTree.get(current);
         if (comparator.compare(value,arrayTree.get(current)) < 0)
-        return findRecursive(2 * current + 1, value);
+            return findRecursive(2 * current + 1, value);
         else
-        return findRecursive(2 * current + 2, value);
+            return findRecursive(2 * current + 2, value);
         
     }
     public Object findByValue(Object value) throws Exception{
@@ -109,151 +96,126 @@ public class BinaryTreeArray {
     }
 
     // Число вершин в поддереве
-    public int getSize(int num){
+    private int getSize(int num){
         if (num >= size || arrayTree.get(num) == null)
             return 0;
         return 1 + getSize(2 * num + 1) + getSize(2 * num + 2);
     }
 
-    //не работает как надо и порой кидает ошибкт
-    private Object getDataAtIndexRecursive(int help, int searchIndex){
-
-        if (help >= size || help >= getSize(searchIndex))
-            return null;
-        if (arrayTree.get(searchIndex) == null)
+    private Object getDataAtIndexRecursive(int searchIndex, int help){
+        if (searchIndex >= size || searchIndex >= getSize(help))
             return null;
 
-        int cntL = getSize(2 * searchIndex + 1); // число вершин в левом поддереве
+        int cntL = getSize(2 * help + 1); // число вершин в левом поддереве
 
-        if (help < cntL)
-            return getDataAtIndexRecursive(help,2 * searchIndex + 1); // Логический номер в левом поддереве
+        if (searchIndex < cntL)
+            return getDataAtIndexRecursive(searchIndex,2 * help + 1); // Логический номер в левом поддереве
 
-        help -= cntL; // отбросить вершины левого поддерева
+        searchIndex -= cntL; // отбросить вершины левого поддерева
 
-        if (help-- == 0)
-            return arrayTree.get(searchIndex); // Логический номер – номер текущей вершины
+        if (searchIndex-- == 0)
+            return arrayTree.get(help); // Логический номер – номер текущей вершины
 
-        return getDataAtIndexRecursive(help,2 * searchIndex + 2);  // в правое поддерево с остатком Логического номера
+        return getDataAtIndexRecursive(searchIndex,2 * help + 2);  // в правое поддерево с остатком Логического номера
     }
-    //не работает как надо
+
+    //нумерация "слева-направо", начинается с 0, см. cprog 8.5
     public Object getDataAtIndex(int searchIndex){
-        return getDataAtIndexRecursive(0, searchIndex);
+        return getDataAtIndexRecursive(searchIndex, 0);
     }
 
-    /*
-
-    Код с Сипрога
-
-    // Число вершин в поддереве
-    public int getSize(int n){
-        if (n >= size || arrayTree.get(n) == null)
-            return 0;
-        return 1 + getSize(2 * n) + getSize(2 * n + 1);
+    public void removeNodeByIndex(int index){
+        Object obj = getDataAtIndex(index);
+        removeNodeByValue(0, obj);
     }
 
-    // Обход дерева
-    void scan(int n, int level, int ln){
-        if (n >= size || arrayTree.get(n) == null)
+    // Функция для удаления узла из BST (array implementation)
+    public void removeNodeByValue(int current, Object key)
+    {
+        if (current >= size)
             return;
-        scan(2  * n,level + 1, ln);
-        System.out.println("l = " + level + "; n = " + ln + "; data = " + arrayTree.get(n).toString() + "\n";
-        ln++;
-        scan(2 * n+1,level + 1, ln);
-    }
 
-    // Поиск вершины по логическому номеру
-    Object getDataAtIndex(int m, int n){
-
-        if (m>=size || m>=getSize(n))
-            return null;
-
-        int ll = getSize(2 * n); // число вершин в левом поддереве
-
-        if (m < ll)
-            return getDataAtIndex(m,2 * n); // ЛН в левом поддереве
-
-        m -= ll; // отбросить вершины левого поддерева
-
-        if (m-- ==0)
-            return arrayTree.get(n); // ЛН – номер текущей вершины
-
-        return getDataAtIndex(m,2 * n + 1);  // в правое поддерево с остатком ЛН
-    }
-
-// Включение с сохранением порядка
-    void insert(int n, Object obj){
-        if (n>=sz){                                             // увеличение размерности при выходе
-
-            sz*=2;                                       // за пределы массива
-
-            p=(char**)realloc(p,sz*sizeof(char*));
-
-            for (int i=sz/2;i<sz;i++) p[i]=NULL; // с обнулением новой части
-
+        // базовый случай: ключ не найден в дереве
+        if (arrayTree.get(current) == null) {
+            return;
         }
 
-        if (p[n] == NULL) { p[n]=ss; return; }         // свободная вершина - включение
+        // если заданный ключ меньше корневого узла, повторить для левого поддерева
+        if (comparator.compare(key, arrayTree.get(current)) < 0) {
+            removeNodeByValue(2 * current + 1, key);
+        }
 
-        if (strcmp(ss,p[n])<0)
+        // если данный ключ больше, чем корневой узел, повторить для правого поддерева
+        else if (comparator.compare(key, arrayTree.get(current)) > 0) {
+            removeNodeByValue(2 * current + 2, key);
+        }
 
-            insert(2*n, ss);                           // выбор левого или правого поддерева
+        // ключ найден
+        else {
+            // Случай 1: удаляемый узел не имеет потомков (это листовой узел)
+            if (2 * current + 1 >= size && 2 * current + 2 >= size){
+                // обновить узел до null
+                arrayTree.set(current, null);
+                return;
+            }
+            else if (arrayTree.get(2 * current + 1) == null && arrayTree.get(2 * current + 2) == null)
+            {
+                // обновить узел до null
+                arrayTree.set(current, null);
+                return;
+            }
 
-        else                                                      // в зависимости от результата сравнения
+            // Случай 2: удаляемый узел имеет двух потомков
+            else if (arrayTree.get(2 * current + 1) != null && arrayTree.get(2 * current + 2) != null)
+            {
+                // найти его неупорядоченный узел-предшественник
+                Object helpObj = new Object();
+                Object predecessor = findMaximumKey(2 * current + 1, helpObj);
 
-            insert(2*n+1, ss);}
+                // копируем значение предшественника в текущий узел
+                arrayTree.set(current, predecessor);
 
-    /*Для балансировки двоичного дерева используется обход с сохранением упорядоченной последовательности
-    в линейном массиве (массиве указателей). Затем массив рекурсивно делится пополам, а значение из середины
-    интервала включается в новое дерево, которое получается сбалансированным.*/
+                // рекурсивно удаляем предшественника
+                removeNodeByValue(2 * current + 1, predecessor);
+            }
 
+            // Случай 3: удаляемый узел имеет только одного потомка
+            else {
+                // выбираем дочерний узел
+                if (arrayTree.get(2 * current + 1) != null){ // если удаляемый узел имеет потомка в левом поддереве
+                    // смещаем элементы в массиве
+                    arrayShiftRecursive(current,2 * current + 1);
+                }
+                else { // если удаляемый узел имеет потомка в правом поддереве
+                    // смещаем элементы в массиве
+                    arrayShiftRecursive(current,2 * current + 2);
+                }
+            }
+        }
+    }
 
-//------------------------------------------------------85-03.cpp
+    private void arrayShiftRecursive(int rootIdx, int index){
+        if (rootIdx > size || index > size)
+            return;
+        if (arrayTree.get(index) == null)
+            return;
+        arrayTree.set(rootIdx, arrayTree.get(index));
+        arrayTree.set(index, null);
+        if (2 * index + 1 >= size || 2 * rootIdx + 1 >= size)
+            return;
+        if (arrayTree.get(2 * index + 1) != null) // смещаем левое поддерево
+            arrayShiftRecursive(2 * rootIdx + 1, 2 * index + 1);
+        if (arrayTree.get(2 * index + 2) != null)  // смещаем правое поддерево
+            arrayShiftRecursive(2 * rootIdx + 2, 2 * index + 2);
+    }
 
-//-- обход дерева с сохранением строк в линейном массиве
-
-   /* void set(char *pp[], int n, int &ln){
-
-        if (n>=sz || p[n]==NULL) return;
-
-        set(pp,2*n,ln);
-
-        pp[ln++]=p[n];
-
-        set(pp,2*n+1,ln);}*/
-
-// Построение сбалансированного дерева
-
-    /*void balance(char *p[], int a, int b){
-
-        if (a>b) return;
-
-        int m=(a+b)/2;                                        // взять строку из середины интервала
-
-        insert(1,p[m]);                                        // и включить в двоичное дерево
-
-        balance(p,a,m-1);                                   // рекурсивно выполнить для левой и
-
-        balance(p,m+1,b);                                  // правой частей
-
-    }*/
-
-// Балансировка дерева
-
-    /*void balance(){
-
-        int sz1=size(1),ln=0;
-
-        char **pp=new char*[sz1];
-
-        set(pp,1,ln);
-
-        delete p;
-
-        init();
-
-        balance(pp,0,sz1-1);
-
-    }};*/
-
-
+    private Object findMaximumKey(int index, Object obj)
+    {
+        if (index >= size)
+            return obj;
+        if (arrayTree.get(index) == null)
+            return obj;
+        obj = findMaximumKey(2 * index + 2, arrayTree.get(index));
+        return obj;
+    }
 }

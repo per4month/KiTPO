@@ -1,6 +1,6 @@
 package model.usertype.prototype;
 
-public enum AwaibleTypes {
+public enum AvailableTypes {
     Integer,
     DateTime
 }

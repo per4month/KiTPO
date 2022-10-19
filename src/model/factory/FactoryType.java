@@ -1,19 +1,16 @@
 package model.factory;
 
-import model.usertype.prototype.AwaibleTypes;
+import model.usertype.prototype.AvailableTypes;
 import model.usertype.prototype.DateTimeType;
 import model.usertype.prototype.IntegerType;
 import model.usertype.prototype.ProtoType;
 
 import java.util.ArrayList;
 
-//TODO Реализовать фабрику
-//TODO Такой вариант был в методичке // done
-
 public class FactoryType {
     public ArrayList<String> getTypeNameList() {
         ArrayList<String> list = new ArrayList<>();
-        for(AwaibleTypes at : AwaibleTypes.values()) {
+        for(AvailableTypes at : AvailableTypes.values()) {
             list.add(String.valueOf(at));
         }
         return list;
