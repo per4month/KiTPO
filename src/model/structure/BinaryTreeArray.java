@@ -2,7 +2,6 @@ package model.structure;
 
 import java.util.Vector;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -17,9 +16,10 @@ public class BinaryTreeArray implements Serializable {
 
     private ArrayList <Object> arrayTree;
 
-    private transient Comparator comparator;
+    private Comparator comparator;
 
     private int size;
+
     // Инициализация структуры данных
     public BinaryTreeArray(){
         size = 10;
@@ -34,11 +34,13 @@ public class BinaryTreeArray implements Serializable {
             arrayTree.add(null);
         this.comparator = comparator;
     }
+
     private BinaryTreeArray(int size, ArrayList<Object> t, Comparator c) {
         this.size = size;
         this.comparator = c;
         this.arrayTree = t;
     }
+
     public void save()  {
         try {
         FileOutputStream outputStream = new FileOutputStream("saved.ser");
@@ -52,6 +54,7 @@ public class BinaryTreeArray implements Serializable {
         }
          
     }
+
     public BinaryTreeArray load() {
         BinaryTreeArray loadedArrayTree = null;
         try {
@@ -67,9 +70,7 @@ public class BinaryTreeArray implements Serializable {
             e.printStackTrace();
         }
         return loadedArrayTree;
-
     }
-
 
     // Вcпомогательный метод вставки значения в массив
     private void insertRecursive(int current, Object obj){
@@ -198,7 +199,7 @@ public class BinaryTreeArray implements Serializable {
         // ключ найден
         else {
             // Случай 1: удаляемый узел не имеет потомков (это листовой узел)
-            if (2 * current + 1 >= size && 2 * current + 2 >= size){
+            if (2 * current + 1 > size && 2 * current + 2 > size){
                 // обновить узел до null
                 arrayTree.set(current, null);
                 return;
@@ -246,7 +247,7 @@ public class BinaryTreeArray implements Serializable {
             return;
         arrayTree.set(rootIdx, arrayTree.get(index));
         arrayTree.set(index, null);
-        if (2 * index + 1 >= size || 2 * rootIdx + 1 >= size)
+        if (2 * index + 1 >= size || 2 * rootIdx + 2 >= size)
             return;
         if (arrayTree.get(2 * index + 1) != null) // смещаем левое поддерево
             arrayShiftRecursive(2 * rootIdx + 1, 2 * index + 1);
@@ -350,5 +351,31 @@ public class BinaryTreeArray implements Serializable {
         t.add(n);
         setHelp(t,2*n+2);
         
+    }
+
+    private String scan(int current, int level, String str){
+        if (current >= size)
+            return str;
+        if (arrayTree.get(current) == null)
+            return str;
+
+        String helpStrL = new String();
+        helpStrL = scan(2 * current + 1, level + 1, helpStrL);
+
+        for (int i = 0; i < level; i++)
+            helpStrL += "           ";
+        helpStrL += (arrayTree.get(current).toString() + "\n");
+
+        String helpStrR = new String();
+        helpStrR = scan(2 * current + 2, level + 1, helpStrR);
+
+        str = helpStrL + helpStrR;
+
+        return str;
+    }
+    @Override
+    public String toString() {
+        String str = "";
+        return scan(0,0,str);
     }
 }
