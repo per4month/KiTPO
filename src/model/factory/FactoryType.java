@@ -14,9 +14,9 @@ public class FactoryType {
             list.add(String.valueOf(at));
         }
         return list;
-
     }
-    public ProtoType getBuilderByName(String name) throws Exception{
+
+    public ProtoType getBuilderByName(String name){
         switch(name) {
             case "Integer":
             {
@@ -26,8 +26,7 @@ public class FactoryType {
             {
                 return new DateTimeType();
             }
-            default:
-            throw new Exception("Can`t get builder by name");
         }
+        return null;
     }
 }

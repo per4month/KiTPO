@@ -3,10 +3,8 @@ package model.usertype.prototype;
 import model.comparator.Comparator;
 import model.comparator.DateTimeComparator;
 import model.usertype.type.DateTimeClass;
-import model.usertype.type.IntegerClass;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Random;
